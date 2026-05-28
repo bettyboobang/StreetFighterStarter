@@ -1,5 +1,7 @@
 import createElement from '../helpers/domHelper';
 import { createFighterImage } from './fighterPreview';
+import { fight } from './fight';
+import showWinnerModal from './modal/winner';
 
 function createFighter(fighter, position) {
     const imgElement = createFighterImage(fighter);
@@ -62,11 +64,15 @@ function createArena(selectedFighters) {
 export default function renderArena(selectedFighters) {
     const root = document.getElementById('root');
     const arena = createArena(selectedFighters);
-
     root.innerHTML = '';
     root.append(arena);
 
-    // todo:
-    // - start the fight
-    // - when fight is finished show winner
+    const [firstFighter, secondFighter] = selectedFighters;//destructuring the selectedFighters array to get the first and second fighter objects
+    fight(firstFighter, secondFighter)//initiating the fight between the two fighters by calling the fight function with the first and second fighter objects as arguments.
+        .then(winner => {//handling the result of the fight, which is expected to be the winner of the fight.
+            showWinnerModal(winner);
+        })
+        .catch(error => {
+            console.error("Something went wrong during the fighting:", error);
+        });
 }

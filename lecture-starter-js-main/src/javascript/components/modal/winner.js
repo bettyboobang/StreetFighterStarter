@@ -19,5 +19,8 @@ export default function showWinnerModal(fighter) {
     showModal({
         title: `${fighter.name} wins!!`,//setting the title of the modal to announce the winner
         bodyElement: modalBody,
+        onClose: () => {
+            window.location.reload();//when the modal is closed, the page will be reloaded to reset the state of the application and allow users to start a new fight or select different fighters.
+        }
     });
 }

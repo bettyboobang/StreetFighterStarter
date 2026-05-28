@@ -2,11 +2,22 @@ import createElement from '../helpers/domHelper';
 import renderArena from './arena';
 import versusImg from '../../../resources/versus.png';
 import { createFighterPreview } from './fighterPreview';
+import fighterService from '../services/fightersService';
 
 const fighterDetailsMap = new Map();
 
 export async function getFighterInfo(fighterId) {
-    // get fighter info from fighterDetailsMap or from service and write it to fighterDetailsMap
+    if (fighterDetailsMap.has(fighterId)) {//we can return data immediately without making another API call
+        return fighterDetailsMap.get(fighterId);
+    }
+    try {//if the fighter data is not in the cache, we proceed to fetch it from the API using the fighter service's method
+        const fighter = await fighterService.getFighterDetails(fighterId); 
+        fighterDetailsMap.set(fighterId, fighter);//after successfully fetching the fighter details, we store it in the cache using the fighter ID as the key and the fighter data as the value
+        
+        return fighter;
+    } catch (error) {
+        console.error('Error fetching fighter info:', error);
+    }
 }
 
 function startFight(selectedFighters) {
@@ -48,14 +59,15 @@ function renderSelectedFighters(selectedFighters) {
 
 export function createFightersSelector() {
     let selectedFighters = [];
-
     return async (event, fighterId) => {
         const fighter = await getFighterInfo(fighterId);
+        const isAlreadySelected = selectedFighters.some(f => f && f._id === fighterId);
+        if (isAlreadySelected) {
+            selectedFighters = selectedFighters.filter(f => f._id !== fighterId);
+        } else if (selectedFighters.length < 2) {
+            selectedFighters.push(fighter);
+        }
         const [playerOne, playerTwo] = selectedFighters;
-        const firstFighter = playerOne ?? fighter;
-        const secondFighter = playerOne ? playerTwo ?? fighter : playerTwo;
-        selectedFighters = [firstFighter, secondFighter];
-
-        renderSelectedFighters(selectedFighters);
+        renderSelectedFighters([playerOne, playerTwo]);
     };
 }

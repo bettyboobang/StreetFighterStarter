@@ -1,6 +1,7 @@
 import createElement from '../helpers/domHelper';
 
 export function createFighterPreview(fighter, position) {
+    console.log('3. Превю отримало бійця:', fighter);
     const positionClassName = position === 'right' ? 'fighter-preview___right' : 'fighter-preview___left';
     const fighterElement = createElement({
         tagName: 'div',

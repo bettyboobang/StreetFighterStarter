@@ -12,7 +12,7 @@ class FighterService {
         }
     }
 
-    async getFighterDetails(id) {
+    async getFighterInfo(id) {
         try {
             const endpoint = `details/fighter/${id}.json`;//forming the endpoint for fetching fighter details based on the provided ID
             const apiResult = await callApi(endpoint);//calling the API helper function to fetch the fighter details from the specified endpoint
